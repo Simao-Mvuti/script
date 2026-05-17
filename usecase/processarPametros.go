@@ -1,49 +1,31 @@
 package usecase
 
 import (
-	"errors"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
+	"flag"
 )
 
-func ProcessarArgumentos() (map[string]string, error) {
-	input := os.Args
-	argumentos := make(map[string]string)
-	var pasta string
-	var quantidade string
+type Parametros struct {
+	Arquivo    string
+	Pasta      string
+	Quantidade int
+}
 
-	if len(input) < 2 {
-		return argumentos, errors.New("Faltando argumentos")
-	}
-	arquivo := input[1]
+func ProcessarArgumentos() (Parametros, error) {
+	var argumentos Parametros
 
-	if len(input) > 2 {
-		pasta = input[2]
-	}
+	arquivo := flag.String("arquivo", "", "Arquivo Excell")
+	pasta := flag.String("saida", ".", "Pastaa de Saida")
+	quantidade := flag.Int("qtd", 2, "Quantidade de Arquivos")
 
-	if len(input) > 3 {
-		quantidade = input[3]
-	}
+	flag.Parse()
 
-	if !strings.Contains(arquivo, "xlsx") {
-		return argumentos, errors.New("Arquivo invalido,Tente um arquivo Excell (xlsx)")
+	if err := validarArquivo(*arquivo); err != nil {
+		return argumentos, err
 	}
 
-	qtd, err := strconv.Atoi(quantidade)
-	if err != nil || qtd < 1 {
-		quantidade = "1"
-	}
-
-	pasta = filepath.Clean(pasta)
-	if filepath.IsLocal(pasta) {
-		return argumentos, errors.New("Caminho da Pasta inválido")
-	}
-
-	argumentos["arquivo"] = arquivo
-	argumentos["pasta"] = pasta
-	argumentos["quantidade"] = quantidade
+	argumentos.Arquivo = *arquivo
+	argumentos.Pasta = *pasta
+	argumentos.Quantidade = *quantidade
 
 	return argumentos, nil
 }
