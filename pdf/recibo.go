@@ -1,5 +1,0 @@
-package pdf
-
-func Recibo() {
-
-}

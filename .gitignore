@@ -1,0 +1,10 @@
+.vscode
+*.env
+*.xlsx
+*.pdf
+*.db
+build/bin
+node_modules
+frontend/dist
+
+
